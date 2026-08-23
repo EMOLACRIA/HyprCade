@@ -92,6 +92,7 @@ require("monitors")
 require("environment")
 require("rules")
 require("layouts")
+require("misc")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
@@ -120,40 +121,6 @@ hl.config({
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 
-
-----------------
-----  MISC  ----
-----------------
-
-hl.config({
-    misc = {
-        force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
-    },
-})
-
-
----------------
----- INPUT ----
----------------
-
-
-
----------------------
----- KEYBINDINGS ----
----------------------
-
-
-
-
---------------------------------
----- WINDOWS AND WORKSPACES ----
---------------------------------
-
--- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
--- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
-
--- Example window rules that are useful
 
 
 })
