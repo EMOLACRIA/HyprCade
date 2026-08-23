@@ -23,12 +23,7 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-    output   = "eDP-1",
-    mode     = "2560x1600@240",
-    position = "0x0",
-    scale    = "1.6",
-})
+
 
 
 ---------------------
@@ -98,6 +93,7 @@ require("appearance")
 require("animations")
 require("input")
 require("keybinds")
+require("monitors")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
