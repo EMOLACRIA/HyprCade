@@ -1,6 +1,9 @@
 import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Services.UPower
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Hyprland
 
 import "../Data"
 
@@ -147,30 +150,52 @@ Scope {
                             Rectangle {
                                 required property int index
 
+                                property int workspaceId: index + 1
+                                property bool focused:
+                                Hyprland.focusedWorkspace !== null
+                                && Hyprland.focusedWorkspace.id === workspaceId
+
                                 width: 34
                                 height: 30
 
-                                color: index === 0
+                                color: focused
                                 ? colors.red
                                 : "transparent"
 
                                 border.width: 1
-                                border.color: index === 0
+                                border.color: focused
                                 ? colors.red
                                 : colors.border
 
                                 Text {
                                     anchors.centerIn: parent
 
-                                    text: String(index + 1).padStart(2, "0")
+                                    text: String(workspaceId).padStart(2, "0")
 
-                                    color: index === 0
+                                    color: focused
                                     ? colors.background
                                     : colors.blue
 
                                     font.family: "monospace"
                                     font.pixelSize: 11
                                     font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: {
+                                        if (Hyprland.usingLua) {
+                                            Hyprland.dispatch(
+                                                'hl.dsp.focus({ workspace = "' + workspaceId + '" })'
+                                            )
+                                        } else {
+                                            Hyprland.dispatch(
+                                                "workspace " + workspaceId
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -216,23 +241,71 @@ Scope {
                         }
 
                         Column {
-                            spacing: 0
+                            id: batteryBlock
 
-                            Text {
-                                text: "BAT"
-                                color: colors.yellow
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 2
 
-                                font.family: "monospace"
-                                font.pixelSize: 9
-                                font.bold: true
+                            // Quickshell returns battery charge as 0.0 - 1.0.
+                            property real batteryLevel:
+                            UPower.displayDevice.ready
+                            ? UPower.displayDevice.percentage * 100
+                            : -1
+
+                            Row {
+                                spacing: 8
+
+                                Text {
+                                    text: "BAT"
+
+                                    color: batteryBlock.batteryLevel >= 0
+                                    && batteryBlock.batteryLevel <= 20
+                                    ? colors.red
+                                    : colors.yellow
+
+                                    font.family: "monospace"
+                                    font.pixelSize: 9
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: batteryBlock.batteryLevel >= 0
+                                    ? Math.round(batteryBlock.batteryLevel) + "%"
+                                    : "--%"
+
+                                    color: colors.text
+
+                                    font.family: "monospace"
+                                    font.pixelSize: 9
+                                }
                             }
 
-                            Text {
-                                text: "78%"
-                                color: colors.text
+                            Row {
+                                spacing: 2
 
-                                font.family: "monospace"
-                                font.pixelSize: 9
+                                Repeater {
+                                    model: 8
+
+                                    Rectangle {
+                                        required property int index
+
+                                        width: 5
+                                        height: 4
+
+                                        property int activeSegments:
+                                        batteryBlock.batteryLevel >= 0
+                                        ? Math.ceil(batteryBlock.batteryLevel / 12.5)
+                                        : 0
+
+                                        color: index < activeSegments
+                                        ? (
+                                            batteryBlock.batteryLevel <= 20
+                                            ? colors.red
+                                            : colors.yellow
+                                        )
+                                        : colors.border
+                                    }
+                                }
                             }
                         }
 
