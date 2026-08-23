@@ -245,6 +245,7 @@ Scope {
             onVisibleChanged: {
                 if (visible) {
                     root.searchText = ""
+                    menuList.currentIndex = 0
                     searchInput.forceActiveFocus()
                 }
             }
@@ -350,7 +351,10 @@ Scope {
                             anchors.verticalCenter: parent.verticalCenter
 
                             text: root.searchText
-                            onTextChanged: root.searchText = text
+                            onTextChanged: {
+                                root.searchText = text
+                                menuList.currentIndex = 0
+                            }
 
                             color: colors.text
                             selectionColor: colors.red
@@ -361,6 +365,47 @@ Scope {
                             font.bold: true
 
                             clip: true
+
+                            Keys.onPressed: function(event) {
+                                if (event.key === Qt.Key_Down) {
+                                    if (menuList.count > 0) {
+                                        menuList.currentIndex =
+                                        (menuList.currentIndex + 1) % menuList.count
+
+                                        menuList.positionViewAtIndex(
+                                            menuList.currentIndex,
+                                            ListView.Contain
+                                        )
+                                    }
+
+                                    event.accepted = true
+                                    return
+                                }
+
+                                if (event.key === Qt.Key_Up) {
+                                    if (menuList.count > 0) {
+                                        menuList.currentIndex =
+                                        (menuList.currentIndex - 1 + menuList.count)
+                                        % menuList.count
+
+                                        menuList.positionViewAtIndex(
+                                            menuList.currentIndex,
+                                            ListView.Contain
+                                        )
+                                    }
+
+                                    event.accepted = true
+                                    return
+                                }
+
+                                if (event.key === Qt.Key_Return
+                                    || event.key === Qt.Key_Enter) {
+                                    if (menuList.currentItem)
+                                        menuList.currentItem.activate()
+
+                                        event.accepted = true
+                                    }
+                            }
 
                             Keys.onEscapePressed: {
                                 root.closeLauncher()
@@ -409,15 +454,24 @@ Scope {
                             ? colors.red
                             : modelData.accent
 
+                            property bool keyboardSelected:
+                            ListView.isCurrentItem
+
+                            property bool highlighted:
+                            keyboardSelected || mouse.containsMouse
+
+                            property bool entryEnabled:
+                            searchResult || modelData.enabled
+
                             width: menuList.width
                             height: 58
 
-                            color: mouse.containsMouse
+                            color: highlighted
                             ? colors.panelAlt
                             : "transparent"
 
                             border.width: 1
-                            border.color: mouse.containsMouse
+                            border.color: highlighted
                             ? menuEntry.entryAccent
                             : "transparent"
 
@@ -430,8 +484,8 @@ Scope {
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                width: 4
-                                height: 32
+                                width: menuEntry.keyboardSelected ? 6 : 4
+                                height: menuEntry.keyboardSelected ? 38 : 32
 
                                 color: menuEntry.entryAccent
                             }
@@ -448,7 +502,7 @@ Scope {
                                     ? "> " + root.searchTitle(modelData)
                                     : "> " + modelData.label
 
-                                    color: mouse.containsMouse
+                                    color: menuEntry.highlighted
                                     ? menuEntry.entryAccent
                                     : colors.text
 
@@ -470,22 +524,10 @@ Scope {
                                 }
                             }
 
-                            MouseArea {
-                                id: mouse
+                            function activate(): void {
+                                if (!menuEntry.entryEnabled)
+                                    return
 
-                                anchors.fill: parent
-                                hoverEnabled: true
-
-                                enabled:
-                                menuEntry.searchResult
-                                || modelData.enabled
-
-                                cursorShape:
-                                enabled
-                                ? Qt.PointingHandCursor
-                                : Qt.ArrowCursor
-
-                                onClicked: {
                                     if (menuEntry.searchResult) {
                                         modelData.execute()
                                         root.closeLauncher()
@@ -507,7 +549,21 @@ Scope {
 
                                         root.closeLauncher()
                                     }
-                                }
+                            }
+
+                            MouseArea {
+                                id: mouse
+
+                                anchors.fill: parent
+                                hoverEnabled: true
+
+                                enabled: menuEntry.entryEnabled
+
+                                cursorShape: enabled
+                                ? Qt.PointingHandCursor
+                                : Qt.ArrowCursor
+
+                                onClicked: menuEntry.activate()
                             }
                         }
                     }
