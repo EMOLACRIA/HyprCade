@@ -5,4 +5,5 @@ import "Layers"
 Scope {
     TopBar {}
     Launcher {}
+    RightPanel {}
 }

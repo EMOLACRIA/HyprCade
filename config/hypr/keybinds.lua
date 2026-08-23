@@ -21,6 +21,7 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprshot -m output --clipboard-only 
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprctl kill"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("hyprpicker -a"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("atlauncher"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("qs -p /home/emo/Programs/HyprCade/config/quickshell/HyprCade ipc call rightpanel toggle"))
 
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("kitty --title 'Turbo Off' sh -c 'echo 1 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo; sleep 1'"))
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("kitty --title 'Turbo On' sh -c 'echo 0 | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo; sleep 1'"))
