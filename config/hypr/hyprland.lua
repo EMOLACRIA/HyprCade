@@ -96,6 +96,7 @@ hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
 require("appearance")
 require("animations")
+require("input")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
