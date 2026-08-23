@@ -6,4 +6,5 @@ Scope {
     TopBar {}
     Launcher {}
     RightPanel {}
+    ControlPanel {}
 }

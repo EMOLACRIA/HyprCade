@@ -151,11 +151,11 @@ Scope {
         },
         {
             label: "HYPRCADE",
-            sub: "CONTROL // SOON",
+            sub: "SYSTEM // CONTROL",
             accent: colors.teal,
             command: "",
-            action: "none",
-            enabled: false
+            action: "control",
+            enabled: true
         }
     ]
 
@@ -530,6 +530,21 @@ Scope {
 
                                     if (menuEntry.searchResult) {
                                         modelData.execute()
+                                        root.closeLauncher()
+                                        return
+                                    }
+
+                                    if (modelData.action === "control") {
+                                        Quickshell.execDetached([
+                                            "qs",
+                                            "-p",
+                                            "/home/emo/Programs/HyprCade/config/quickshell/HyprCade",
+                                            "ipc",
+                                            "call",
+                                            "controlpanel",
+                                            "toggle"
+                                        ])
+
                                         root.closeLauncher()
                                         return
                                     }
