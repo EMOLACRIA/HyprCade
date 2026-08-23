@@ -1,9 +1,11 @@
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Networking
 import Quickshell.Services.UPower
+
 import QtQuick
 import QtQuick.Layouts
-import Quickshell.Hyprland
+
 
 import "../Data"
 
@@ -214,11 +216,31 @@ Scope {
                         spacing: 22
 
                         Column {
+                            id: networkBlock
+
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 0
+
+                            readonly property var devices:
+                            Networking.devices
+                            ? Networking.devices.values
+                            : []
+
+                            readonly property bool online: {
+                                for (let i = 0; i < devices.length; ++i) {
+                                    if (devices[i].connected)
+                                        return true
+                                }
+
+                                return false
+                            }
 
                             Text {
                                 text: "NET"
-                                color: colors.blue
+
+                                color: networkBlock.online
+                                ? colors.blue
+                                : colors.red
 
                                 font.family: "monospace"
                                 font.pixelSize: 9
@@ -226,7 +248,10 @@ Scope {
                             }
 
                             Text {
-                                text: "ONLINE"
+                                text: networkBlock.online
+                                ? "ONLINE"
+                                : "OFFLINE"
+
                                 color: colors.text
 
                                 font.family: "monospace"
