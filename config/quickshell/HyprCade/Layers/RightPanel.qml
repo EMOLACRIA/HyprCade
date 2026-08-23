@@ -4,11 +4,95 @@ import Quickshell.Services.Mpris
 import "../Components"
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Services.Pipewire
 
 import "../Data"
 
 Scope {
     id: root
+
+    property bool outputPickerOpen: false
+
+    readonly property string outputName:
+    root.audioSink
+    ? (
+        root.audioSink.description
+        || root.audioSink.nickname
+        || root.audioSink.name
+        || "UNKNOWN OUTPUT"
+    )
+    : "NO OUTPUT"
+
+    readonly property var audioSink: Pipewire.defaultAudioSink
+
+    readonly property int volumePercent:
+    root.audioSink
+    && root.audioSink.audio
+    ? Math.round(root.audioSink.audio.volume * 100)
+    : 0
+
+    readonly property bool audioMuted:
+    root.audioSink
+    && root.audioSink.audio
+    ? root.audioSink.audio.muted
+    : false
+
+    function sinkLabel(node) {
+        return (
+            node.description
+            || node.nickname
+            || node.name
+            || ""
+        ).toLowerCase()
+    }
+
+    function isLaptopSink(node) {
+        const label = sinkLabel(node)
+
+        return label.includes("speaker")
+        || label.includes("hoparlör")
+        || label.includes("analog stereo")
+        || label.includes("built-in")
+        || label.includes("internal")
+    }
+
+    function isPicunSink(node) {
+        const label = sinkLabel(node)
+
+        return label.includes("picun")
+        || label.includes("g2")
+    }
+
+    function isAllowedSink(node) {
+        return isLaptopSink(node) || isPicunSink(node)
+    }
+
+    ScriptModel {
+        id: audioOutputModel
+
+        values: {
+            if (!Pipewire.nodes)
+                return []
+
+                return [...Pipewire.nodes.values]
+                .filter(node =>
+                node
+                && node.audio
+                && node.isSink
+                && !node.isStream
+                && isAllowedSink(node)
+                )
+                .sort((a, b) => {
+                    const aPicun = isPicunSink(a) ? 1 : 0
+                    const bPicun = isPicunSink(b) ? 1 : 0
+                    return aPicun - bPicun
+                })
+        }
+    }
+
+    PwObjectTracker {
+        objects: [root.audioSink]
+    }
 
     property int cpuUsage: 0
     property int ramUsage: 0
@@ -593,6 +677,381 @@ Scope {
                             accent: root.diskUsage >= 90
                             ? colors.red
                             : colors.teal
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 18
+                        Layout.bottomMargin: 16
+
+                        height: 1
+                        color: colors.border
+                    }
+
+                    Text {
+                        text: "AUDIO OUTPUT"
+
+                        color: colors.red
+
+                        font.family: "monospace"
+                        font.pixelSize: 10
+                        font.bold: true
+                        font.letterSpacing: 1
+                    }
+
+
+                    // ──────────────────────────
+                    // OUTPUT DEVICE
+                    // ──────────────────────────
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 10
+
+                        height: 38
+
+                        color: colors.panel
+
+                        border.width: 1
+                        border.color: root.outputPickerOpen
+                        ? colors.yellow
+                        : colors.border
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            width: parent.width - 92
+
+                            text: root.outputName.toUpperCase()
+
+                            color: colors.text
+
+                            font.family: "monospace"
+                            font.pixelSize: 9
+                            font.bold: true
+
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            text: root.outputPickerOpen
+                            ? "[ CLOSE ]"
+                            : "[ CHANGE ]"
+
+                            color: colors.yellow
+
+                            font.family: "monospace"
+                            font.pixelSize: 8
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                root.outputPickerOpen =
+                                !root.outputPickerOpen
+                            }
+                        }
+                    }
+
+
+                    // ──────────────────────────
+                    // OUTPUT LIST
+                    // ──────────────────────────
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: visible ? 6 : 0
+
+                        visible: root.outputPickerOpen
+                        spacing: 4
+
+                        Repeater {
+                            model: audioOutputModel
+
+                            Rectangle {
+                                required property var modelData
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 34
+
+                                property bool active:
+                                root.audioSink
+                                && root.audioSink.id === modelData.id
+
+                                color: active
+                                ? colors.panelAlt
+                                : "transparent"
+
+                                border.width: 1
+                                border.color: active
+                                ? colors.blue
+                                : colors.border
+
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+
+                                    width: 3
+                                    height: 20
+
+                                    color: active
+                                    ? colors.blue
+                                    : colors.muted
+                                }
+
+                                Text {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 12
+
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 10
+
+                                    anchors.verticalCenter: parent.verticalCenter
+
+                                    text: (
+                                        modelData.description
+                                        || modelData.nickname
+                                        || modelData.name
+                                        || "UNKNOWN OUTPUT"
+                                    ).toUpperCase()
+
+                                    color: active
+                                    ? colors.blue
+                                    : colors.text
+
+                                    font.family: "monospace"
+                                    font.pixelSize: 9
+                                    font.bold: active
+
+                                    elide: Text.ElideRight
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: {
+                                        Pipewire.preferredDefaultAudioSink =
+                                        modelData
+
+                                        root.outputPickerOpen = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 10
+
+                        Text {
+                            text: root.audioMuted
+                            ? "MUTED"
+                            : "VOLUME"
+
+                            color: root.audioMuted
+                            ? colors.red
+                            : colors.text
+
+                            font.family: "monospace"
+                            font.pixelSize: 10
+                            font.bold: true
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Text {
+                            text: root.volumePercent + "%"
+
+                            color: colors.text
+
+                            font.family: "monospace"
+                            font.pixelSize: 10
+                            font.bold: true
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 7
+
+                        spacing: 3
+
+                        Repeater {
+                            model: 10
+
+                            Rectangle {
+                                required property int index
+
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 6
+
+                                color:
+                                !root.audioMuted
+                                && index < Math.ceil(root.volumePercent / 10)
+                                ? colors.red
+                                : colors.border
+
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    cursorShape: Qt.PointingHandCursor
+
+                                    onClicked: {
+                                        if (!root.audioSink || !root.audioSink.audio)
+                                            return
+
+                                            root.audioSink.audio.volume =
+                                            (index + 1) / 10.0
+
+                                            root.audioSink.audio.muted = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 10
+
+                        spacing: 8
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 30
+
+                            color: "transparent"
+
+                            border.width: 1
+                            border.color: colors.border
+
+                            Text {
+                                anchors.centerIn: parent
+
+                                text: "-"
+
+                                color: colors.blue
+
+                                font.family: "monospace"
+                                font.pixelSize: 14
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+                                    if (!root.audioSink || !root.audioSink.audio)
+                                        return
+
+                                        root.audioSink.audio.volume =
+                                        Math.max(
+                                            0,
+                                            root.audioSink.audio.volume - 0.10
+                                        )
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 30
+
+                            color: root.audioMuted
+                            ? colors.red
+                            : "transparent"
+
+                            border.width: 1
+                            border.color: colors.red
+
+                            Text {
+                                anchors.centerIn: parent
+
+                                text: root.audioMuted
+                                ? "UNMUTE"
+                                : "MUTE"
+
+                                color: root.audioMuted
+                                ? colors.background
+                                : colors.red
+
+                                font.family: "monospace"
+                                font.pixelSize: 9
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+                                    if (!root.audioSink || !root.audioSink.audio)
+                                        return
+
+                                        root.audioSink.audio.muted =
+                                        !root.audioSink.audio.muted
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            height: 30
+
+                            color: "transparent"
+
+                            border.width: 1
+                            border.color: colors.border
+
+                            Text {
+                                anchors.centerIn: parent
+
+                                text: "+"
+
+                                color: colors.blue
+
+                                font.family: "monospace"
+                                font.pixelSize: 14
+                                font.bold: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+                                    if (!root.audioSink || !root.audioSink.audio)
+                                        return
+
+                                        root.audioSink.audio.volume =
+                                        Math.min(
+                                            1.0,
+                                            root.audioSink.audio.volume + 0.10
+                                        )
+
+                                        root.audioSink.audio.muted = false
+                                }
+                            }
                         }
                     }
 
