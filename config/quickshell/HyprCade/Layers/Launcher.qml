@@ -10,24 +10,208 @@ Scope {
     id: root
 
     property bool opened: false
+    property bool windowVisible: false
+    property string searchText: ""
+
+    function openLauncher(): void {
+        hideTimer.stop()
+        root.windowVisible = true
+        root.opened = true
+    }
+
+    function closeLauncher(): void {
+        root.opened = false
+        hideTimer.restart()
+    }
+
+    function toggleLauncher(): void {
+        if (root.opened)
+            root.closeLauncher()
+            else
+                root.openLauncher()
+    }
+
+    function openMusic(): void {
+        const apps = DesktopEntries.applications.values
+
+        // Önce Spotify Adblock sürümünü ara.
+        for (let i = 0; i < apps.length; ++i) {
+            const name = (apps[i].name || "").toLowerCase()
+
+            if (name === "spotify (adblock)"
+                || (name.includes("spotify")
+                && name.includes("adblock"))) {
+                apps[i].execute()
+                return
+                }
+        }
+
+        // Bulamazsa herhangi bir Spotify entry'sini aç.
+        for (let i = 0; i < apps.length; ++i) {
+            const name = (apps[i].name || "").toLowerCase()
+
+            if (name.includes("spotify")) {
+                apps[i].execute()
+                return
+            }
+        }
+    }
+
+    function backendTag(app): string {
+        const id = (app.id || "").toLowerCase()
+        const exec = (app.execString || "").toLowerCase()
+
+        if (id.includes("flatpak")
+            || exec.includes("flatpak")
+            || id.includes("com.valvesoftware.steam"))
+            return "FLATPAK"
+
+            return "NATIVE"
+    }
+
+    function searchTitle(app): string {
+        const name = (app.name || "").toUpperCase()
+        const lowerName = (app.name || "").toLowerCase()
+
+        if (lowerName.includes("steam"))
+            return name + " [" + root.backendTag(app) + "]"
+
+            return name
+    }
+
+    function searchSubtitle(app): string {
+        const name = (app.name || "").toLowerCase()
+
+        if (name.includes("steam"))
+            return "STEAM // " + root.backendTag(app)
+
+            if (app.genericName && app.genericName.length > 0)
+                return app.genericName.toUpperCase()
+
+                if (app.comment && app.comment.length > 0)
+                    return app.comment.toUpperCase()
+
+                    return (app.id || "APPLICATION").toUpperCase()
+    }
+
+    Timer {
+        id: hideTimer
+        interval: 220
+
+        onTriggered: {
+            if (!root.opened)
+                root.windowVisible = false
+        }
+    }
 
     Palette {
         id: colors
     }
 
+    readonly property var quickActions: [
+        {
+            label: "TERMINAL",
+            sub: "ターミナル",
+            accent: colors.blue,
+            command: "kitty",
+            action: "command",
+            enabled: true
+        },
+        {
+            label: "FILES",
+            sub: "ファイル",
+            accent: colors.yellow,
+            command: "dolphin",
+            action: "command",
+            enabled: true
+        },
+        {
+            label: "BROWSER",
+            sub: "ブラウザ",
+            accent: colors.red,
+            command: "zen-browser",
+            action: "command",
+            enabled: true
+        },
+        {
+            label: "MUSIC",
+            sub: "スポティファイ // 広告なし",
+            accent: colors.blue,
+            command: "",
+            action: "music",
+            enabled: true
+        },
+        {
+            label: "LOCK",
+            sub: "ロック",
+            accent: colors.yellow,
+            command: "hyprlock",
+            action: "command",
+            enabled: true
+        },
+        {
+            label: "HYPRCADE",
+            sub: "CONTROL // SOON",
+            accent: colors.teal,
+            command: "",
+            action: "none",
+            enabled: false
+        }
+    ]
+
     IpcHandler {
         target: "launcher"
 
         function toggle(): void {
-            root.opened = !root.opened
+            root.toggleLauncher()
         }
 
         function open(): void {
-            root.opened = true
+            root.openLauncher()
         }
 
         function close(): void {
-            root.opened = false
+            root.closeLauncher()
+        }
+    }
+
+    ScriptModel {
+        id: appSearchModel
+
+        values: {
+            if (!root.windowVisible)
+                return []
+
+                const query = root.searchText.trim().toLowerCase()
+
+                if (query.length === 0)
+                    return []
+
+                    const apps = DesktopEntries.applications.values
+
+                    return [...apps]
+                    .filter(app => {
+                        const name = (app.name || "").toLowerCase()
+                        const generic = (app.genericName || "").toLowerCase()
+                        const comment = (app.comment || "").toLowerCase()
+
+                        return name.includes(query)
+                        || generic.includes(query)
+                        || comment.includes(query)
+                    })
+                    .sort((a, b) => {
+                        const an = (a.name || "").toLowerCase()
+                        const bn = (b.name || "").toLowerCase()
+
+                        const aStarts = an.startsWith(query)
+                        const bStarts = bn.startsWith(query)
+
+                        if (aStarts !== bStarts)
+                            return aStarts ? -1 : 1
+
+                            return an.localeCompare(bn)
+                    })
+                    .slice(0, 8)
         }
     }
 
@@ -38,7 +222,7 @@ Scope {
             required property var modelData
 
             screen: modelData
-            visible: root.opened
+            visible: root.windowVisible
 
             anchors {
                 top: true
@@ -49,17 +233,35 @@ Scope {
             margins {
                 top: 64
                 bottom: 14
-                left: 12
+                left: 0
             }
 
-            implicitWidth: 300
+            implicitWidth: 312
 
             exclusiveZone: 0
             color: "transparent"
             focusable: true
 
+            onVisibleChanged: {
+                if (visible) {
+                    root.searchText = ""
+                    searchInput.forceActiveFocus()
+                }
+            }
+
             Rectangle {
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+
+                width: 300
+                x: root.opened ? 12 : -300
+
+                Behavior on x {
+                    NumberAnimation {
+                        duration: 220
+                        easing.type: Easing.OutCubic
+                    }
+                }
 
                 color: colors.background
 
@@ -76,13 +278,9 @@ Scope {
 
                     spacing: 0
 
-                    // ──────────────────────────
                     // HEADER
-                    // ──────────────────────────
-
                     Text {
                         text: "SYSTEM"
-
                         color: colors.yellow
 
                         font.family: "monospace"
@@ -93,7 +291,6 @@ Scope {
 
                     Text {
                         text: "MENU"
-
                         color: colors.text
 
                         font.family: "monospace"
@@ -104,9 +301,7 @@ Scope {
 
                     Text {
                         text: "システム"
-
                         color: colors.muted
-
                         font.pixelSize: 9
                     }
 
@@ -116,14 +311,78 @@ Scope {
                         Layout.bottomMargin: 12
 
                         height: 1
-
                         color: colors.border
                     }
 
-                    // ──────────────────────────
-                    // MENU
-                    // ──────────────────────────
+                    // SEARCH
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.bottomMargin: 12
 
+                        height: 38
+                        color: colors.panel
+
+                        border.width: 1
+                        border.color: searchInput.activeFocus
+                        ? colors.yellow
+                        : colors.border
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 12
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            text: ">"
+                            color: colors.red
+
+                            font.family: "monospace"
+                            font.pixelSize: 12
+                            font.bold: true
+                        }
+
+                        TextInput {
+                            id: searchInput
+
+                            anchors.left: parent.left
+                            anchors.leftMargin: 30
+                            anchors.right: parent.right
+                            anchors.rightMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            text: root.searchText
+                            onTextChanged: root.searchText = text
+
+                            color: colors.text
+                            selectionColor: colors.red
+                            selectedTextColor: colors.background
+
+                            font.family: "monospace"
+                            font.pixelSize: 11
+                            font.bold: true
+
+                            clip: true
+
+                            Keys.onEscapePressed: {
+                                root.closeLauncher()
+                            }
+                        }
+
+                        Text {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 30
+                            anchors.verticalCenter: parent.verticalCenter
+
+                            visible: searchInput.text.length === 0
+
+                            text: "SEARCH SYSTEM..."
+                            color: colors.muted
+
+                            font.family: "monospace"
+                            font.pixelSize: 9
+                        }
+                    }
+
+                    // MENU / SEARCH RESULTS
                     ListView {
                         id: menuList
 
@@ -131,60 +390,24 @@ Scope {
                         Layout.fillHeight: true
 
                         spacing: 3
-
                         clip: true
 
-                        model: [
-                            {
-                                label: "TERMINAL",
-                                sub: "ターミナル",
-                                accent: colors.blue,
-                                command: "kitty",
-                                enabled: true
-                            },
-                            {
-                                label: "FILES",
-                                sub: "ファイル",
-                                accent: colors.yellow,
-                                command: "dolphin",
-                                enabled: true
-                            },
-                            {
-                                label: "BROWSER",
-                                sub: "ブラウザ",
-                                accent: colors.red,
-                                command: "zen-browser",
-                                enabled: true
-                            },
-                            {
-                                label: "MUSIC",
-                                sub: "ミュージック",
-                                accent: colors.blue,
-                                command:
-                                "command -v spotify >/dev/null && spotify || "
-                                + "command -v spotify-launcher >/dev/null && spotify-launcher",
-                                enabled: true
-                            },
-                            {
-                                label: "LOCK",
-                                sub: "ロック",
-                                accent: colors.yellow,
-                                command: "hyprlock",
-                                enabled: true
-                            },
-                            {
-                                label: "HYPRCADE",
-                                sub: "CONTROL // SOON",
-                                accent: colors.teal,
-                                command: "",
-                                enabled: false
-                            }
-                        ]
+                        model: root.searchText.trim().length > 0
+                        ? appSearchModel
+                        : root.quickActions
 
                         delegate: Rectangle {
                             id: menuEntry
 
                             required property var modelData
+
+                            property bool searchResult:
+                            root.searchText.trim().length > 0
+
+                            property color entryAccent:
+                            searchResult
+                            ? colors.red
+                            : modelData.accent
 
                             width: menuList.width
                             height: 58
@@ -194,12 +417,14 @@ Scope {
                             : "transparent"
 
                             border.width: 1
-
                             border.color: mouse.containsMouse
-                            ? modelData.accent
+                            ? menuEntry.entryAccent
                             : "transparent"
 
-                            opacity: modelData.enabled ? 1.0 : 0.45
+                            opacity:
+                            menuEntry.searchResult || modelData.enabled
+                            ? 1.0
+                            : 0.45
 
                             Rectangle {
                                 anchors.left: parent.left
@@ -208,7 +433,7 @@ Scope {
                                 width: 4
                                 height: 32
 
-                                color: modelData.accent
+                                color: menuEntry.entryAccent
                             }
 
                             Column {
@@ -219,10 +444,12 @@ Scope {
                                 spacing: 2
 
                                 Text {
-                                    text: "> " + modelData.label
+                                    text: menuEntry.searchResult
+                                    ? "> " + root.searchTitle(modelData)
+                                    : "> " + modelData.label
 
                                     color: mouse.containsMouse
-                                    ? modelData.accent
+                                    ? menuEntry.entryAccent
                                     : colors.text
 
                                     font.family: "monospace"
@@ -232,7 +459,9 @@ Scope {
                                 }
 
                                 Text {
-                                    text: modelData.sub
+                                    text: menuEntry.searchResult
+                                    ? root.searchSubtitle(modelData)
+                                    : modelData.sub
 
                                     color: colors.muted
 
@@ -245,31 +474,45 @@ Scope {
                                 id: mouse
 
                                 anchors.fill: parent
-
                                 hoverEnabled: true
-                                enabled: modelData.enabled
 
-                                cursorShape: modelData.enabled
+                                enabled:
+                                menuEntry.searchResult
+                                || modelData.enabled
+
+                                cursorShape:
+                                enabled
                                 ? Qt.PointingHandCursor
                                 : Qt.ArrowCursor
 
                                 onClicked: {
-                                    Quickshell.execDetached([
-                                        "sh",
-                                        "-lc",
-                                        modelData.command
-                                    ])
+                                    if (menuEntry.searchResult) {
+                                        modelData.execute()
+                                        root.closeLauncher()
+                                        return
+                                    }
 
-                                    root.opened = false
+                                    if (modelData.action === "music") {
+                                        root.openMusic()
+                                        root.closeLauncher()
+                                        return
+                                    }
+
+                                    if (modelData.action === "command") {
+                                        Quickshell.execDetached([
+                                            "sh",
+                                            "-lc",
+                                            modelData.command
+                                        ])
+
+                                        root.closeLauncher()
+                                    }
                                 }
                             }
                         }
                     }
 
-                    // ──────────────────────────
                     // FOOTER
-                    // ──────────────────────────
-
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.topMargin: 8
@@ -284,7 +527,6 @@ Scope {
 
                         Text {
                             text: "BEBOP SYS."
-
                             color: colors.red
 
                             font.family: "monospace"
@@ -298,7 +540,6 @@ Scope {
 
                         Text {
                             text: "STAY COOL"
-
                             color: colors.text
 
                             font.family: "monospace"
