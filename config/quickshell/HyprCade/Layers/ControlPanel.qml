@@ -248,6 +248,7 @@ Scope {
                             color: colors.border
                         }
 
+                        // DESKTOP
                         Text {
                             text: "DESKTOP"
 
@@ -259,6 +260,8 @@ Scope {
                             font.letterSpacing: 1
                         }
 
+
+                        // RELOAD THEME
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.topMargin: 10
@@ -308,7 +311,6 @@ Scope {
 
                                 anchors.fill: parent
                                 hoverEnabled: true
-
                                 cursorShape: Qt.PointingHandCursor
 
                                 onClicked: {
@@ -322,6 +324,137 @@ Scope {
                             }
                         }
 
+
+                        // RESTART SHELL
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.topMargin: 6
+
+                            height: 42
+
+                            color: shellMouse.containsMouse
+                            ? colors.panelAlt
+                            : "transparent"
+
+                            border.width: 1
+                            border.color: shellMouse.containsMouse
+                            ? colors.teal
+                            : colors.border
+
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: "> RESTART SHELL"
+
+                                color: shellMouse.containsMouse
+                                ? colors.teal
+                                : colors.text
+
+                                font.family: "monospace"
+                                font.pixelSize: 10
+                                font.bold: true
+                            }
+
+                            Text {
+                                anchors.right: parent.right
+                                anchors.rightMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: "QUICKSHELL"
+
+                                color: colors.muted
+
+                                font.family: "monospace"
+                                font.pixelSize: 8
+                            }
+
+                            MouseArea {
+                                id: shellMouse
+
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+                                    Quickshell.execDetached([
+                                        "bash",
+                                        "-lc",
+                                        "pkill quickshell; "
+                                        + "sleep 0.2; "
+                                        + "quickshell -p "
+                                        + "/home/emo/Programs/HyprCade/config/quickshell/HyprCade "
+                                        + ">/tmp/hyprcade-quickshell.log 2>&1 &"
+                                    ])
+                                }
+                            }
+                        }
+
+
+                        // RELOAD HYPRLAND
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.topMargin: 6
+
+                            height: 42
+
+                            color: hyprMouse.containsMouse
+                            ? colors.panelAlt
+                            : "transparent"
+
+                            border.width: 1
+                            border.color: hyprMouse.containsMouse
+                            ? colors.red
+                            : colors.border
+
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: "> RELOAD HYPRLAND"
+
+                                color: hyprMouse.containsMouse
+                                ? colors.red
+                                : colors.text
+
+                                font.family: "monospace"
+                                font.pixelSize: 10
+                                font.bold: true
+                            }
+
+                            Text {
+                                anchors.right: parent.right
+                                anchors.rightMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                text: "WM"
+
+                                color: colors.muted
+
+                                font.family: "monospace"
+                                font.pixelSize: 8
+                            }
+
+                            MouseArea {
+                                id: hyprMouse
+
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+
+                                onClicked: {
+                                    Quickshell.execDetached([
+                                        "hyprctl",
+                                        "reload"
+                                    ])
+                                }
+                            }
+                        }
+
+
+                        // DIVIDER
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.topMargin: 18
@@ -329,17 +462,6 @@ Scope {
 
                             height: 1
                             color: colors.border
-                        }
-
-                        Text {
-                            text: "THEME ENGINE"
-
-                            color: colors.teal
-
-                            font.family: "monospace"
-                            font.pixelSize: 10
-                            font.bold: true
-                            font.letterSpacing: 1
                         }
 
                         Column {
