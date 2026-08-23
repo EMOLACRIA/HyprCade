@@ -89,7 +89,7 @@ require("animations")
 require("input")
 require("keybinds")
 require("monitors")
-
+require("environment")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
