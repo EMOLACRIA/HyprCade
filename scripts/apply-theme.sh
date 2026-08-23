@@ -29,6 +29,7 @@ mkdir -p "$STATE_DIR"
 
 WALLPAPER_PATH="$ROOT_DIR/$WALLPAPER"
 
+
 # ─────────────────────────────────────
 # QUICKSHELL THEME STATE
 # ─────────────────────────────────────
@@ -55,12 +56,29 @@ cat > "$STATE_DIR/theme.json" <<EOF
 }
 EOF
 
-# ─────────────────────────────────────
-# HYPRPAPER STARTUP STATE
-# ─────────────────────────────────────
 
 # ─────────────────────────────────────
-# WALLPAPER
+# HYPRLAND THEME STATE
+# ─────────────────────────────────────
+
+RED_HEX="${RED#\#}"
+BLUE_HEX="${BLUE#\#}"
+BORDER_HEX="${BORDER#\#}"
+
+cat > "$STATE_DIR/hypr-theme.lua" <<EOF
+return {
+    active_border = {
+        "rgba(${RED_HEX}ee)",
+        "rgba(${BLUE_HEX}ee)"
+    },
+
+    inactive_border = "rgba(${BORDER_HEX}aa)"
+}
+EOF
+
+
+# ─────────────────────────────────────
+# WALLPAPER STATE + LIVE WALLPAPER
 # ─────────────────────────────────────
 
 if [[ -f "$WALLPAPER_PATH" ]]; then
@@ -81,18 +99,14 @@ else
     echo "  $WALLPAPER_PATH"
 fi
 
+
 # ─────────────────────────────────────
-# LIVE WALLPAPER
+# RELOAD HYPRLAND
 # ─────────────────────────────────────
 
-if [[ -f "$WALLPAPER_PATH" ]]; then
-    if hyprctl hyprpaper listactive >/dev/null 2>&1; then
-        hyprctl hyprpaper wallpaper \
-            "$MONITOR, $WALLPAPER_PATH, $WALLPAPER_FIT"
-    fi
-else
-    echo "HyprCade: wallpaper not found yet:"
-    echo "  $WALLPAPER_PATH"
+if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl reload >/dev/null 2>&1 || true
 fi
+
 
 echo "HyprCade: applied theme '$THEME_NAME'"

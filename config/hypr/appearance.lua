@@ -1,3 +1,27 @@
+local defaultTheme = {
+    active_border = {
+        "rgba(D33A3Aee)",
+        "rgba(3977A8ee)",
+    },
+
+    inactive_border = "rgba(243644aa)",
+}
+
+local theme = defaultTheme
+
+local home = os.getenv("HOME")
+
+if home then
+    local themePath =
+    home .. "/.local/state/hyprcade/hypr-theme.lua"
+
+    local ok, loaded = pcall(dofile, themePath)
+
+    if ok and type(loaded) == "table" then
+        theme = loaded
+        end
+        end
+
 hl.config({
     general = {
         gaps_in = 2,
@@ -7,11 +31,11 @@ hl.config({
 
         col = {
             active_border = {
-                colors = {"rgba(33ccffee)", "rgba(00ff99ee)"},
+                colors = theme.active_border,
                 angle = 45,
             },
 
-            inactive_border = "rgba(595959aa)",
+            inactive_border = theme.inactive_border,
         },
 
         resize_on_border = false,
