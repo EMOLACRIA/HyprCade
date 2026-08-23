@@ -1,0 +1,102 @@
+[global]
+
+    # ─────────────────────────────────────
+    # HYPRCADE // NOTIFICATION SYSTEM
+    # ─────────────────────────────────────
+
+    monitor = 0
+    follow = none
+
+    width = (340, 430)
+    height = (0, 180)
+
+    origin = top-right
+    offset = (16, 72)
+
+    scale = 0
+    notification_limit = 5
+
+    # SHAPE
+    corner_radius = 0
+    frame_width = 1
+    gap_size = 8
+    separator_height = 0
+
+    padding = 12
+    horizontal_padding = 14
+    text_icon_padding = 12
+
+    # TYPOGRAPHY
+    font = Monospace 9
+    line_height = 3
+
+    markup = full
+
+    alignment = left
+    vertical_alignment = center
+
+    word_wrap = yes
+    ellipsize = end
+    ignore_newline = no
+
+    # PROGRESS / VOLUME STYLE NOTIFICATIONS
+    progress_bar = true
+    progress_bar_height = 7
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 180
+    progress_bar_max_width = 380
+    progress_bar_corner_radius = 0
+
+    # ICONS
+
+    icon_position = off
+
+    # BEHAVIOUR
+    indicate_hidden = yes
+    sort = yes
+
+    show_age_threshold = 60
+    sticky_history = yes
+    history_length = 50
+
+    stack_duplicates = true
+    hide_duplicate_count = false
+
+    browser = /usr/bin/xdg-open
+
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_current
+    mouse_right_click = close_all
+
+
+[urgency_low]
+
+    background = "@BACKGROUND@"
+    foreground = "@MUTED@"
+    frame_color = "@BORDER@"
+
+    format = "<span foreground='@MUTED@'><b>SYS // %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 4
+
+
+[urgency_normal]
+
+    background = "@PANEL@"
+    foreground = "@TEXT@"
+    frame_color = "@BLUE@"
+
+    format = "<span foreground='@BLUE@'><b>MSG // %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 7
+
+
+[urgency_critical]
+
+    background = "@PANEL@"
+    foreground = "@TEXT@"
+    frame_color = "@RED@"
+
+    format = "<span foreground='@RED@'><b>WARN // %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 0

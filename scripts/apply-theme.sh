@@ -78,6 +78,29 @@ EOF
 
 
 # ─────────────────────────────────────
+# DUNST THEME STATE
+# ─────────────────────────────────────
+
+DUNST_TEMPLATE="$ROOT_DIR/config/dunst/dunstrc.template"
+DUNST_STATE="$STATE_DIR/dunstrc"
+
+if [[ -f "$DUNST_TEMPLATE" ]]; then
+    sed \
+        -e "s|@BACKGROUND@|$BACKGROUND|g" \
+        -e "s|@PANEL@|$PANEL|g" \
+        -e "s|@PANEL_ALT@|$PANEL_ALT|g" \
+        -e "s|@TEXT@|$TEXT|g" \
+        -e "s|@MUTED@|$MUTED|g" \
+        -e "s|@RED@|$RED|g" \
+        -e "s|@YELLOW@|$YELLOW|g" \
+        -e "s|@BLUE@|$BLUE|g" \
+        -e "s|@TEAL@|$TEAL|g" \
+        -e "s|@BORDER@|$BORDER|g" \
+        "$DUNST_TEMPLATE" \
+        > "$DUNST_STATE"
+fi
+
+# ─────────────────────────────────────
 # WALLPAPER STATE + LIVE WALLPAPER
 # ─────────────────────────────────────
 
@@ -108,5 +131,12 @@ if command -v hyprctl >/dev/null 2>&1; then
     hyprctl reload >/dev/null 2>&1 || true
 fi
 
+# ─────────────────────────────────────
+# RELOAD DUNST
+# ─────────────────────────────────────
+
+if systemctl --user is-active --quiet dunst 2>/dev/null; then
+    systemctl --user restart dunst || true
+fi
 
 echo "HyprCade: applied theme '$THEME_NAME'"
