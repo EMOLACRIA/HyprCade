@@ -36,17 +36,6 @@ local fileManager = "dolphin"
 local menu        = "hyprlauncher"
 
 
--------------------
----- AUTOSTART ----
--------------------
-
--- See https://wiki.hypr.land/Configuring/Basics/Autostart/
-
--- Autostart necessary processes (like notifications daemons, status bars, etc.)
--- Or execute your favorite apps at launch like this:
---
-
-
 
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
@@ -93,6 +82,7 @@ require("environment")
 require("rules")
 require("layouts")
 require("misc")
+require("system")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
@@ -120,16 +110,3 @@ hl.config({
 -- })
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
-
-
-
-})
-
-hl.config({
-    xwayland = {
-        force_zero_scaling = true
-    },
-    misc = {
-        vrr = 1,
-    }
-})
