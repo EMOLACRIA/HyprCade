@@ -18,7 +18,7 @@ general {
 background {
     monitor =
 
-    path = /home/emo/Programs/HyprCade/wallpapers/cowboy-bebop/main.png
+    path = @WALLPAPER_PATH@
 
     blur_passes = 0
 
@@ -37,9 +37,9 @@ background {
 label {
     monitor =
 
-    text = HYPRCADE // BEBOP SYSTEM
+    text = HYPRCADE // @SYSTEM_NAME@
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     font_family = monospace
     font_size = 11
@@ -56,7 +56,7 @@ label {
 
     text = SHIP SECURITY // LOCAL SESSION
 
-    color = rgb(71808D)
+    color = rgb(@MUTED_HEX@)
 
     font_family = monospace
     font_size = 8
@@ -73,7 +73,7 @@ label {
 
     text = NODE 01 // SECURE
 
-    color = rgb(3977A8)
+    color = rgb(@BLUE_HEX@)
 
     font_family = monospace
     font_size = 9
@@ -94,7 +94,7 @@ shape {
 
     size = 95, 3
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     rounding = 0
 
@@ -110,7 +110,7 @@ shape {
 
     size = 45, 3
 
-    color = rgb(D6A83C)
+    color = rgb(@YELLOW_HEX@)
 
     rounding = 0
 
@@ -126,7 +126,7 @@ shape {
 
     size = 22, 3
 
-    color = rgb(3977A8)
+    color = rgb(@BLUE_HEX@)
 
     rounding = 0
 
@@ -146,7 +146,7 @@ label {
 
     text = $TIME
 
-    color = rgb(E8E2D5)
+    color = rgb(@TEXT_HEX@)
 
     font_family = monospace
     font_size = 78
@@ -163,7 +163,7 @@ label {
 
     text = cmd[update:1000] date '+%a // %d %b %Y' | tr '[:lower:]' '[:upper:]'
 
-    color = rgb(71808D)
+    color = rgb(@MUTED_HEX@)
 
     font_family = monospace
     font_size = 11
@@ -184,7 +184,7 @@ shape {
 
     size = 520, 1
 
-    color = rgb(243644)
+    color = rgb(@BORDER_HEX@)
 
     rounding = 0
 
@@ -200,7 +200,7 @@ label {
 
     text = SESSION // LOCKED
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     font_family = monospace
     font_size = 20
@@ -217,7 +217,7 @@ label {
 
     text = AUTHORIZATION REQUIRED TO RESTORE CONTROL
 
-    color = rgb(71808D)
+    color = rgb(@MUTED_HEX@)
 
     font_family = monospace
     font_size = 8
@@ -234,7 +234,7 @@ shape {
 
     size = 520, 1
 
-    color = rgb(243644)
+    color = rgb(@BORDER_HEX@)
 
     rounding = 0
 
@@ -254,7 +254,7 @@ label {
 
     text = USER // $USER
 
-    color = rgb(3977A8)
+    color = rgb(@BLUE_HEX@)
 
     font_family = monospace
     font_size = 9
@@ -271,7 +271,7 @@ label {
 
     text = SECURITY // ARMED
 
-    color = rgb(3D8177)
+    color = rgb(@TEAL_HEX@)
 
     font_family = monospace
     font_size = 9
@@ -288,7 +288,7 @@ label {
 
     text = LINK // LOCAL
 
-    color = rgb(D6A83C)
+    color = rgb(@YELLOW_HEX@)
 
     font_family = monospace
     font_size = 9
@@ -317,10 +317,10 @@ input-field {
     outline_thickness = 1
     rounding = 0
 
-    outer_color = rgb(3977A8)
-    inner_color = rgba(7, 10, 13, 0.92)
+    outer_color = rgb(@BLUE_HEX@)
+    inner_color = rgba(@BACKGROUND_RGB@, 0.92)
 
-    font_color = rgb(E8E2D5)
+    font_color = rgb(@TEXT_HEX@)
     font_family = monospace
 
     dots_size = 0.17
@@ -330,15 +330,15 @@ input-field {
 
     fade_on_empty = false
 
-    placeholder_text = <span foreground="##71808D">ACCESS CODE // ENTER PASSWORD</span>
+    placeholder_text = <span foreground="##@MUTED_HEX@">ACCESS CODE // ENTER PASSWORD</span>
 
-    check_color = rgb(3D8177)
+    check_color = rgb(@TEAL_HEX@)
     check_text = LINK ESTABLISHED // VERIFYING
 
-    fail_color = rgb(D33A3A)
+    fail_color = rgb(@RED_HEX@)
     fail_text = ACCESS DENIED // $FAIL
 
-    capslock_color = rgb(D6A83C)
+    capslock_color = rgb(@YELLOW_HEX@)
 }
 
 
@@ -347,7 +347,7 @@ label {
 
     text = [ ENTER // RESTORE SESSION ]
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     font_family = monospace
     font_size = 9
@@ -368,7 +368,7 @@ shape {
 
     size = 3, 110
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     rounding = 0
 
@@ -384,7 +384,7 @@ shape {
 
     size = 3, 55
 
-    color = rgb(3977A8)
+    color = rgb(@BLUE_HEX@)
 
     rounding = 0
 
@@ -400,7 +400,7 @@ shape {
 
     size = 3, 30
 
-    color = rgb(D6A83C)
+    color = rgb(@YELLOW_HEX@)
 
     rounding = 0
 
@@ -416,7 +416,7 @@ label {
 
     text = 01
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     font_family = monospace
     font_size = 8
@@ -433,7 +433,7 @@ label {
 
     text = AUTH
 
-    color = rgb(71808D)
+    color = rgb(@MUTED_HEX@)
 
     font_family = monospace
     font_size = 7
@@ -454,7 +454,7 @@ shape {
 
     size = 150, 2
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     rounding = 0
 
@@ -468,9 +468,9 @@ shape {
 label {
     monitor =
 
-    text = BEBOP SYS. // LOCK PROTOCOL 01
+    text = @SYSTEM_NAME@ // LOCK PROTOCOL 01
 
-    color = rgb(D33A3A)
+    color = rgb(@RED_HEX@)
 
     font_family = monospace
     font_size = 8
@@ -487,7 +487,7 @@ label {
 
     text = SEE YOU SPACE COWBOY
 
-    color = rgb(E8E2D5)
+    color = rgb(@TEXT_HEX@)
 
     font_family = monospace
     font_size = 9

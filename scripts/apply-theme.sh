@@ -61,9 +61,23 @@ EOF
 # HYPRLAND THEME STATE
 # ─────────────────────────────────────
 
+BACKGROUND_HEX="${BACKGROUND#\#}"
+TEXT_HEX="${TEXT#\#}"
+MUTED_HEX="${MUTED#\#}"
+
 RED_HEX="${RED#\#}"
+YELLOW_HEX="${YELLOW#\#}"
 BLUE_HEX="${BLUE#\#}"
+TEAL_HEX="${TEAL#\#}"
+
 BORDER_HEX="${BORDER#\#}"
+
+BACKGROUND_RGB="$(
+    printf '%d, %d, %d' \
+        "$((16#${BACKGROUND_HEX:0:2}))" \
+        "$((16#${BACKGROUND_HEX:2:2}))" \
+        "$((16#${BACKGROUND_HEX:4:2}))"
+)"
 
 cat > "$STATE_DIR/hypr-theme.lua" <<EOF
 return {
@@ -80,6 +94,29 @@ EOF
 # ─────────────────────────────────────
 # DUNST THEME STATE
 # ─────────────────────────────────────
+
+# ─────────────────────────────────────
+# HYPRLOCK THEME STATE
+# ─────────────────────────────────────
+
+HYPRLOCK_TEMPLATE="$ROOT_DIR/config/hyprlock/hyprlock.conf.template"
+HYPRLOCK_STATE="$STATE_DIR/hyprlock.conf"
+
+if [[ -f "$HYPRLOCK_TEMPLATE" ]]; then
+    sed \
+        -e "s|@WALLPAPER_PATH@|$WALLPAPER_PATH|g" \
+        -e "s|@SYSTEM_NAME@|$SYSTEM_NAME|g" \
+        -e "s|@BACKGROUND_RGB@|$BACKGROUND_RGB|g" \
+        -e "s|@TEXT_HEX@|$TEXT_HEX|g" \
+        -e "s|@MUTED_HEX@|$MUTED_HEX|g" \
+        -e "s|@RED_HEX@|$RED_HEX|g" \
+        -e "s|@YELLOW_HEX@|$YELLOW_HEX|g" \
+        -e "s|@BLUE_HEX@|$BLUE_HEX|g" \
+        -e "s|@TEAL_HEX@|$TEAL_HEX|g" \
+        -e "s|@BORDER_HEX@|$BORDER_HEX|g" \
+        "$HYPRLOCK_TEMPLATE" \
+        > "$HYPRLOCK_STATE"
+fi
 
 DUNST_TEMPLATE="$ROOT_DIR/config/dunst/dunstrc.template"
 DUNST_STATE="$STATE_DIR/dunstrc"
