@@ -27,7 +27,82 @@ STATE_DIR="$STATE_HOME/hyprcade"
 
 mkdir -p "$STATE_DIR"
 
-WALLPAPER_PATH="$ROOT_DIR/$WALLPAPER"
+# ─────────────────────────────────────
+# WALLPAPER SELECTION
+# ─────────────────────────────────────
+
+WALLPAPER_STATE_DIR="$STATE_DIR/wallpapers"
+WALLPAPER_SELECTION_FILE="$WALLPAPER_STATE_DIR/$THEME_ID"
+
+mkdir -p "$WALLPAPER_STATE_DIR"
+
+WALLPAPER_SELECTED_ID="${WALLPAPER_DEFAULT_ID:-main}"
+
+if [[ -f "$WALLPAPER_SELECTION_FILE" ]]; then
+    read -r WALLPAPER_SELECTED_ID \
+        < "$WALLPAPER_SELECTION_FILE"
+fi
+
+
+WALLPAPER_ID=""
+WALLPAPER_NAME=""
+WALLPAPER_RELATIVE_PATH=""
+WALLPAPER_SELECTED_FIT="${WALLPAPER_FIT:-cover}"
+
+
+resolve_wallpaper() {
+    local target_id="$1"
+
+    if ! declare -p WALLPAPER_VARIANTS \
+        >/dev/null 2>&1; then
+        return 1
+    fi
+
+    local variant
+    local id
+    local name
+    local file
+    local fit
+
+    for variant in "${WALLPAPER_VARIANTS[@]}"; do
+        IFS='|' read -r \
+            id name file fit <<< "$variant"
+
+        if [[ "$id" == "$target_id" ]]; then
+            WALLPAPER_ID="$id"
+            WALLPAPER_NAME="$name"
+            WALLPAPER_RELATIVE_PATH="$file"
+            WALLPAPER_SELECTED_FIT="$fit"
+
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+
+# Try saved choice first.
+if ! resolve_wallpaper "$WALLPAPER_SELECTED_ID"; then
+
+    # Saved choice no longer exists: use theme default.
+    WALLPAPER_SELECTED_ID="${WALLPAPER_DEFAULT_ID:-main}"
+
+    if ! resolve_wallpaper "$WALLPAPER_SELECTED_ID"; then
+
+        # Backward-compatible fallback.
+        WALLPAPER_ID="main"
+        WALLPAPER_NAME="MAIN"
+        WALLPAPER_RELATIVE_PATH="$WALLPAPER"
+        WALLPAPER_SELECTED_FIT="${WALLPAPER_FIT:-cover}"
+    fi
+fi
+
+
+WALLPAPER_PATH="$ROOT_DIR/$WALLPAPER_RELATIVE_PATH"
+
+printf '%s\n' "$WALLPAPER_ID" \
+    > "$WALLPAPER_SELECTION_FILE"
 
 
 # ─────────────────────────────────────
@@ -138,6 +213,51 @@ if [[ -f "$DUNST_TEMPLATE" ]]; then
 fi
 
 # ─────────────────────────────────────
+# WALLPAPER REGISTRY STATE
+# ─────────────────────────────────────
+
+WALLPAPER_JSON="$STATE_DIR/wallpapers.json"
+WALLPAPER_JSON_TMP="$WALLPAPER_JSON.tmp"
+
+{
+    printf '{\n'
+    printf '    "themeId": "%s",\n' "$THEME_ID"
+    printf '    "activeId": "%s",\n' "$WALLPAPER_ID"
+    printf '    "variants": [\n'
+
+    first=true
+
+    if declare -p WALLPAPER_VARIANTS \
+        >/dev/null 2>&1; then
+
+        for variant in "${WALLPAPER_VARIANTS[@]}"; do
+            IFS='|' read -r \
+                id name file fit <<< "$variant"
+
+            if [[ "$first" == false ]]; then
+                printf ',\n'
+            fi
+
+            first=false
+
+            printf '        {'
+            printf '"id":"%s",' "$id"
+            printf '"name":"%s",' "$name"
+            printf '"path":"%s",' "$ROOT_DIR/$file"
+            printf '"relativePath":"%s",' "$file"
+            printf '"fit":"%s"' "$fit"
+            printf '}'
+        done
+    fi
+
+    printf '\n    ]\n'
+    printf '}\n'
+
+} > "$WALLPAPER_JSON_TMP"
+
+mv "$WALLPAPER_JSON_TMP" "$WALLPAPER_JSON"
+
+# ─────────────────────────────────────
 # WALLPAPER STATE + LIVE WALLPAPER
 # ─────────────────────────────────────
 
@@ -146,13 +266,13 @@ if [[ -f "$WALLPAPER_PATH" ]]; then
 wallpaper {
     monitor = $MONITOR
     path = $WALLPAPER_PATH
-    fit_mode = $WALLPAPER_FIT
+    fit_mode = $WALLPAPER_SELECTED_FIT
 }
 EOF
 
     if hyprctl hyprpaper listactive >/dev/null 2>&1; then
         hyprctl hyprpaper wallpaper \
-            "$MONITOR, $WALLPAPER_PATH, $WALLPAPER_FIT"
+            "$MONITOR, $WALLPAPER_PATH, $WALLPAPER_SELECTED_FIT"
     fi
 else
     echo "HyprCade: wallpaper not found yet:"

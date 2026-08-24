@@ -8,5 +8,6 @@ Scope {
     RightPanel {}
     ControlPanel {}
     PowerMenu {}
+    VisualDeck {}
     Osd {}
 }
