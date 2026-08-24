@@ -10,7 +10,9 @@ local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(
     mainMod .. " + M",
-    hl.dsp.exec_cmd("uwsm stop")
+    hl.dsp.exec_cmd(
+        "qs -p /home/emo/Programs/HyprCade/config/quickshell/HyprCade ipc call powermenu toggle"
+    )
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))

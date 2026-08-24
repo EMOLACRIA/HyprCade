@@ -7,5 +7,6 @@ Scope {
     Launcher {}
     RightPanel {}
     ControlPanel {}
+    PowerMenu {}
     Osd {}
 }

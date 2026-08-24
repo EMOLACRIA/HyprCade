@@ -145,8 +145,8 @@ Scope {
             label: "LOCK",
             sub: "ロック",
             accent: colors.yellow,
-            command: "hyprlock",
-            action: "command",
+            command: "",
+            action: "lock",
             enabled: true
         },
         {
@@ -552,6 +552,18 @@ Scope {
                                     if (modelData.action === "music") {
                                         root.openMusic()
                                         root.closeLauncher()
+                                        return
+                                    }
+
+                                    if (modelData.action === "lock") {
+                                        root.closeLauncher()
+
+                                        Quickshell.execDetached([
+                                            "sh",
+                                            "-lc",
+                                            "sleep 0.45; exec hyprlock"
+                                        ])
+
                                         return
                                     }
 
