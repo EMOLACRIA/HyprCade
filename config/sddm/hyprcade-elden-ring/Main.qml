@@ -1,6 +1,6 @@
-import QtQuick
-import QtQuick.Window
-import QtQuick.Layouts
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Layouts 1.15
 
 Rectangle {
     id: root
@@ -29,7 +29,7 @@ Rectangle {
     property bool loginFailed: false
     property date currentTime: new Date()
 
-    function login(): void {
+    function login() {
         if (userInput.text.length === 0)
             return
 
