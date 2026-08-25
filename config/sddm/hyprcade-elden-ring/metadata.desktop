@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=HyprCade Elden Ring
+Description=HyprCade Elden Ring authentication theme
+Author=EMOLACRIA
+Copyright=
+License=
+Type=sddm-theme
+Version=1.0
+Website=
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Email=
+Theme-Id=hyprcade-elden-ring
+Theme-API=2.0

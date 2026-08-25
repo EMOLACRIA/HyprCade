@@ -1,0 +1,272 @@
+# ============================================================
+# HYPRCADE // ELDEN RING
+# HYPRLOCK — SITE OF GRACE
+# ============================================================
+
+general {
+    hide_cursor = false
+    ignore_empty_input = true
+    immediate_render = true
+}
+
+# ============================================================
+# BACKGROUND
+# Keep the moon / character composition visible.
+# ============================================================
+
+background {
+    monitor =
+
+    path = @WALLPAPER_PATH@
+
+    blur_passes = 0
+
+    brightness = 0.58
+    contrast = 1.02
+
+    vibrancy = 0.08
+    vibrancy_darkness = 0.0
+}
+
+# ============================================================
+# TOP LEFT — REALM MARK
+# ============================================================
+
+label {
+    monitor =
+
+    text = HYPRCADE
+
+    color = rgb(@YELLOW_HEX@)
+
+    font_family = serif
+    font_size = 10
+
+    position = 54, -42
+
+    halign = left
+    valign = top
+}
+
+label {
+    monitor =
+
+    text = @SYSTEM_NAME@
+
+    color = rgb(@TEXT_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = 54, -62
+
+    halign = left
+    valign = top
+}
+
+shape {
+    monitor =
+
+    size = 150, 1
+
+    color = rgb(@YELLOW_HEX@)
+
+    rounding = 0
+
+    position = 54, -88
+
+    halign = left
+    valign = top
+}
+
+# ============================================================
+# TOP RIGHT — TIME
+# ============================================================
+
+label {
+    monitor =
+
+    text = $TIME
+
+    color = rgb(@TEXT_HEX@)
+
+    font_family = serif
+    font_size = 38
+
+    position = -54, -36
+
+    halign = right
+    valign = top
+}
+
+label {
+    monitor =
+
+    text = cmd[update:1000] date '+%A  //  %d %B %Y' | tr '[:lower:]' '[:upper:]'
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = -56, -102
+
+    halign = right
+    valign = top
+}
+
+# ============================================================
+# LEFT LOWER — GRACE / AUTHENTICATION
+# Keep center-bottom clear for the Tarnished in the wallpaper.
+# ============================================================
+
+label {
+    monitor =
+
+    text = ✦  SITE OF GRACE
+
+    color = rgb(@YELLOW_HEX@)
+
+    font_family = serif
+    font_size = 12
+
+    position = 64, 244
+
+    halign = left
+    valign = bottom
+}
+
+label {
+    monitor =
+
+    text = SESSION REMAINS SEALED
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = 64, 220
+
+    halign = left
+    valign = bottom
+}
+
+shape {
+    monitor =
+
+    size = 520, 1
+
+    color = rgb(@BORDER_HEX@)
+
+    rounding = 0
+
+    position = 64, 198
+
+    halign = left
+    valign = bottom
+}
+
+input-field {
+    monitor =
+
+    size = 520, 52
+
+    position = 64, 128
+
+    halign = left
+    valign = bottom
+
+    outline_thickness = 1
+rounding = 12
+
+    outer_color = rgb(@YELLOW_HEX@)
+    inner_color = rgba(@BACKGROUND_RGB@, 0.82)
+
+    font_color = rgb(@TEXT_HEX@)
+    font_family = serif
+
+    dots_size = 0.19
+    dots_spacing = 0.25
+    dots_center = true
+    dots_rounding = 3
+
+    fade_on_empty = false
+
+    placeholder_text = <span foreground="##@MUTED_HEX@">TOUCH GRACE  //  ENTER PASSWORD</span>
+
+    check_color = rgb(@BLUE_HEX@)
+    check_text = THE SEAL YIELDS
+
+    fail_color = rgb(@RED_HEX@)
+    fail_text = GRACE DENIED  //  $FAIL
+
+    capslock_color = rgb(@YELLOW_HEX@)
+}
+
+label {
+    monitor =
+
+    text = ENTER  //  RETURN TO THE LANDS BETWEEN
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = 64, 92
+
+    halign = left
+    valign = bottom
+}
+
+# ============================================================
+# BOTTOM MARKINGS
+# ============================================================
+
+shape {
+    monitor =
+
+    size = 150, 1
+
+    color = rgb(@BLUE_HEX@)
+
+    rounding = 0
+
+    position = 64, 52
+
+    halign = left
+    valign = bottom
+}
+
+label {
+    monitor =
+
+    text = GUIDED BY GRACE
+
+    color = rgb(@BLUE_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = 64, 30
+
+    halign = left
+    valign = bottom
+}
+
+label {
+    monitor =
+
+    text = THE LANDS BETWEEN  //  LOCKED
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = serif
+    font_size = 8
+
+    position = -54, 30
+
+    halign = right
+    valign = bottom
+}

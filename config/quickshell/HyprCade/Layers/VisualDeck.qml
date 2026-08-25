@@ -9,6 +9,8 @@ import "../Data"
 Scope {
     id: root
 
+    property string selectionMode: "theme"
+
     property bool opened: false
     property bool windowVisible: false
 
@@ -51,7 +53,7 @@ Scope {
             number: "04",
             id: "undertale",
             name: "UNDERTALE",
-            available: false
+            available: true
         },
         {
             number: "05",
@@ -63,7 +65,7 @@ Scope {
             number: "06",
             id: "elden-ring",
             name: "ELDEN RING",
-            available: false
+            available: true
         },
         {
             number: "07",
@@ -271,7 +273,6 @@ Scope {
             }
 
             implicitHeight: 382
-
             exclusiveZone: 0
             color: "transparent"
 
@@ -297,7 +298,6 @@ Scope {
 
                 width: Math.min(parent.width - 40, 1320)
                 height: 350
-
                 y: root.opened
                 ? 14
                 : parent.height + 12
@@ -637,14 +637,23 @@ Scope {
                                     anchors.fill: parent
 
                                     hoverEnabled: true
-                                    cursorShape:
-                                    Qt.PointingHandCursor
+                                    cursorShape: Qt.PointingHandCursor
 
                                     onClicked: {
-                                        root.selectedThemeIndex =
-                                        index
+                                        root.selectedThemeIndex = index
+                                        root.selectionMode = "theme"
 
                                         keyHandler.forceActiveFocus()
+                                    }
+
+                                    onDoubleClicked: {
+                                        root.selectedThemeIndex = index
+                                        root.selectionMode = "theme"
+
+                                        if (modelData.available)
+                                            root.applySelectedTheme()
+
+                                            keyHandler.forceActiveFocus()
                                     }
                                 }
                             }
@@ -845,8 +854,8 @@ Scope {
                                     cursorShape: Qt.PointingHandCursor
 
                                     onClicked: {
-                                        root.selectedWallpaperIndex =
-                                        index
+                                        root.selectedWallpaperIndex = index
+                                        root.selectionMode = "wallpaper"
 
                                         wallpaperList.positionViewAtIndex(
                                             index,
@@ -857,8 +866,8 @@ Scope {
                                     }
 
                                     onDoubleClicked: {
-                                        root.selectedWallpaperIndex =
-                                        index
+                                        root.selectedWallpaperIndex = index
+                                        root.selectionMode = "wallpaper"
 
                                         root.applySelectedWallpaper()
                                     }
@@ -875,14 +884,28 @@ Scope {
                             Layout.preferredWidth: 250
                             Layout.preferredHeight: 96
 
+                            readonly property bool themeMode:
+                            root.selectionMode === "theme"
+
                             color: colors.panel
 
                             border.width: 1
-                            border.color:
-                            root.selectedWallpaperActive
-                            ? colors.teal
-                            : colors.border
 
+                            border.color: {
+                                if (themeMode) {
+                                    if (root.selectedThemeActive)
+                                        return colors.teal
+
+                                        if (root.selectedThemeAvailable)
+                                            return colors.yellow
+
+                                            return colors.border
+                                }
+
+                                return root.selectedWallpaperActive
+                                ? colors.teal
+                                : colors.border
+                            }
 
                             ColumnLayout {
                                 anchors.fill: parent
@@ -890,84 +913,145 @@ Scope {
 
                                 spacing: 2
 
-
                                 Text {
-                                    text:
-                                    root.selectedWallpaper
-                                    ? "> "
-                                    + root.selectedWallpaper.name
-                                    : "> NONE"
+                                    text: {
+                                        if (parent.parent.themeMode) {
+                                            return root.selectedTheme
+                                            ? "> " + root.selectedTheme.name
+                                            : "> NONE"
+                                        }
 
-                                    color: colors.text
+                                        return root.selectedWallpaper
+                                        ? "> " + root.selectedWallpaper.name
+                                        : "> NONE"
+                                    }
+
+                                    color: {
+                                        if (
+                                            parent.parent.themeMode
+                                            && !root.selectedThemeAvailable
+                                        )
+                                            return colors.muted
+
+                                            return colors.text
+                                    }
 
                                     font.family: "monospace"
                                     font.pixelSize: 10
                                     font.bold: true
                                 }
 
-
                                 Text {
-                                    text:
-                                    root.selectedWallpaperActive
-                                    ? "STATUS // ACTIVE"
-                                    : "STATUS // READY"
+                                    text: {
+                                        if (parent.parent.themeMode) {
+                                            if (root.selectedThemeActive)
+                                                return "STATUS // ACTIVE"
 
-                                    color:
-                                    root.selectedWallpaperActive
-                                    ? colors.teal
-                                    : colors.yellow
+                                                if (root.selectedThemeAvailable)
+                                                    return "STATUS // READY"
+
+                                                    return "STATUS // OFFLINE"
+                                        }
+
+                                        return root.selectedWallpaperActive
+                                        ? "STATUS // ACTIVE"
+                                        : "STATUS // READY"
+                                    }
+
+                                    color: {
+                                        if (parent.parent.themeMode) {
+                                            if (root.selectedThemeActive)
+                                                return colors.teal
+
+                                                if (root.selectedThemeAvailable)
+                                                    return colors.yellow
+
+                                                    return colors.muted
+                                        }
+
+                                        return root.selectedWallpaperActive
+                                        ? colors.teal
+                                        : colors.yellow
+                                    }
 
                                     font.family: "monospace"
                                     font.pixelSize: 7
                                 }
 
-
                                 Item {
                                     Layout.fillHeight: true
                                 }
-
 
                                 Rectangle {
                                     Layout.fillWidth: true
                                     height: 30
 
+                                    property bool actionEnabled:
+                                    parent.parent.themeMode
+                                    ? root.selectedThemeAvailable
+                                    : root.selectedWallpaper !== null
+
                                     color:
-                                    wallpaperApplyMouse.containsMouse
+                                    actionMouse.containsMouse
+                                    && actionEnabled
                                     ? colors.panelAlt
                                     : "transparent"
 
                                     border.width: 1
-                                    border.color: colors.blue
 
+                                    border.color:
+                                    actionEnabled
+                                    ? colors.blue
+                                    : colors.border
 
                                     Text {
                                         anchors.centerIn: parent
 
-                                        text:
-                                        root.selectedWallpaperActive
-                                        ? "[ REAPPLY WALLPAPER ]"
-                                        : "[ APPLY WALLPAPER ]"
+                                        text: {
+                                            if (parent.parent.parent.themeMode) {
+                                                if (!root.selectedThemeAvailable)
+                                                    return "[ THEME OFFLINE ]"
 
-                                        color: colors.blue
+                                                    return root.selectedThemeActive
+                                                    ? "[ REAPPLY THEME ]"
+                                                    : "[ APPLY THEME ]"
+                                            }
+
+                                            return root.selectedWallpaperActive
+                                            ? "[ REAPPLY WALLPAPER ]"
+                                            : "[ APPLY WALLPAPER ]"
+                                        }
+
+                                        color:
+                                        parent.actionEnabled
+                                        ? colors.blue
+                                        : colors.muted
 
                                         font.family: "monospace"
                                         font.pixelSize: 8
                                         font.bold: true
                                     }
 
-
                                     MouseArea {
-                                        id: wallpaperApplyMouse
+                                        id: actionMouse
 
                                         anchors.fill: parent
 
+                                        enabled: parent.actionEnabled
                                         hoverEnabled: true
+
                                         cursorShape:
-                                        Qt.PointingHandCursor
+                                        enabled
+                                        ? Qt.PointingHandCursor
+                                        : Qt.ArrowCursor
 
                                         onClicked: {
-                                            root.applySelectedWallpaper()
-                                            keyHandler.forceActiveFocus()
+                                            if (root.selectionMode === "theme")
+                                                root.applySelectedTheme()
+                                                else
+                                                    root.applySelectedWallpaper()
+
+                                                    keyHandler.forceActiveFocus()
                                         }
                                     }
                                 }
@@ -980,147 +1064,21 @@ Scope {
                         // SELECTED THEME STATUS
                         // =====================================
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            spacing: 0
 
 
-                            Text {
-                                text: "SELECTION"
-
-                                color: colors.red
-
-                                font.family: "monospace"
-                                font.pixelSize: 9
-                                font.bold: true
-                                font.letterSpacing: 1.1
-                            }
 
 
-                            Text {
-                                Layout.topMargin: 5
-
-                                text:
-                                "> "
-                                + root.selectedTheme.name
-
-                                color:
-                                root.selectedThemeAvailable
-                                ? colors.text
-                                : colors.muted
-
-                                font.family: "monospace"
-                                font.pixelSize: 13
-                                font.bold: true
-                            }
-
-
-                            Text {
-                                Layout.topMargin: 3
-
-                                text:
-                                root.selectedThemeActive
-                                ? "STATUS // ACTIVE"
-                                : root.selectedThemeAvailable
-                                ? "STATUS // READY TO APPLY"
-                                : "STATUS // THEME OFFLINE"
-
-                                color:
-                                root.selectedThemeActive
-                                ? colors.teal
-                                : root.selectedThemeAvailable
-                                ? colors.yellow
-                                : colors.muted
-
-                                font.family: "monospace"
-                                font.pixelSize: 8
-                            }
-
-
-                            Item {
-                                Layout.fillHeight: true
-                            }
-
-
-                            Rectangle {
-                                Layout.fillWidth: true
-
-                                height: 34
-
-                                color:
-                                applyMouse.containsMouse
-                                && root.selectedThemeAvailable
-                                ? colors.panelAlt
-                                : "transparent"
-
-                                border.width: 1
-
-                                border.color:
-                                root.selectedThemeAvailable
-                                ? colors.red
-                                : colors.border
-
-
-                                Text {
-                                    anchors.centerIn: parent
-
-                                    text:
-                                    root.selectedThemeActive
-                                    ? "[ REAPPLY ACTIVE THEME ]"
-                                    : root.selectedThemeAvailable
-                                    ? "[ ENTER // APPLY THEME ]"
-                                    : "[ THEME DATA NOT INSTALLED ]"
-
-                                    color:
-                                    root.selectedThemeAvailable
-                                    ? colors.red
-                                    : colors.muted
-
-                                    font.family: "monospace"
-                                    font.pixelSize: 9
-                                    font.bold: true
-                                }
-
-
-                                MouseArea {
-                                    id: applyMouse
-
-                                    anchors.fill: parent
-
-                                    enabled:
-                                    root.selectedThemeAvailable
-
-                                    hoverEnabled: true
-
-                                    cursorShape:
-                                    enabled
-                                    ? Qt.PointingHandCursor
-                                    : Qt.ArrowCursor
-
-                                    onClicked: {
-                                        root.applySelectedTheme()
-                                        keyHandler.forceActiveFocus()
-                                    }
-                                }
-                            }
+                        Item {
+                            Layout.preferredHeight: 12
                         }
 
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.bottomMargin: 9
 
-
-                    Item {
-                        Layout.fillHeight: true
-                    }
-
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.bottomMargin: 9
-
-                        height: 1
-                        color: colors.border
-                    }
+                            height: 1
+                            color: colors.border
+                        }
 
 
                     // =========================================

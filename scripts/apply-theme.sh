@@ -174,7 +174,12 @@ EOF
 # HYPRLOCK THEME STATE
 # ─────────────────────────────────────
 
-HYPRLOCK_TEMPLATE="$ROOT_DIR/config/hyprlock/hyprlock.conf.template"
+HYPRLOCK_TEMPLATE="${HYPRLOCK_TEMPLATE:-config/hyprlock/hyprlock.conf.template}"
+
+if [[ "$HYPRLOCK_TEMPLATE" != /* ]]; then
+    HYPRLOCK_TEMPLATE="$ROOT_DIR/$HYPRLOCK_TEMPLATE"
+fi
+
 HYPRLOCK_STATE="$STATE_DIR/hyprlock.conf"
 
 if [[ -f "$HYPRLOCK_TEMPLATE" ]]; then
@@ -193,7 +198,16 @@ if [[ -f "$HYPRLOCK_TEMPLATE" ]]; then
         > "$HYPRLOCK_STATE"
 fi
 
-DUNST_TEMPLATE="$ROOT_DIR/config/dunst/dunstrc.template"
+# ─────────────────────────────────────
+# DUNST THEME STATE
+# ─────────────────────────────────────
+
+DUNST_TEMPLATE="${DUNST_TEMPLATE:-config/dunst/dunstrc.template}"
+
+if [[ "$DUNST_TEMPLATE" != /* ]]; then
+    DUNST_TEMPLATE="$ROOT_DIR/$DUNST_TEMPLATE"
+fi
+
 DUNST_STATE="$STATE_DIR/dunstrc"
 
 if [[ -f "$DUNST_TEMPLATE" ]]; then
@@ -297,3 +311,13 @@ if systemctl --user is-active --quiet dunst 2>/dev/null; then
 fi
 
 echo "HyprCade: applied theme '$THEME_NAME'"
+
+# ─────────────────────────────────────
+# SDDM THEME SYNC
+# ─────────────────────────────────────
+
+if sudo -n /usr/local/bin/hyprcade-set-sddm-theme "$THEME_ID"; then
+    :
+else
+    echo "HyprCade: no matching SDDM theme for '$THEME_ID'; keeping current SDDM theme."
+fi

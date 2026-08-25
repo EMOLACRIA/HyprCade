@@ -1,0 +1,96 @@
+[global]
+
+    # ─────────────────────────────────────
+    # HYPRCADE // ELDEN RING NOTIFICATIONS
+    # ─────────────────────────────────────
+
+    monitor = 0
+    follow = none
+
+    width = (350, 440)
+    height = (0, 180)
+
+    origin = top-right
+    offset = (16, 76)
+
+    scale = 0
+    notification_limit = 5
+
+    corner_radius = 0
+    frame_width = 1
+    gap_size = 9
+    separator_height = 0
+
+    padding = 13
+    horizontal_padding = 15
+    text_icon_padding = 12
+
+    font = Serif 9
+    line_height = 4
+
+    markup = full
+
+    alignment = left
+    vertical_alignment = center
+
+    word_wrap = yes
+    ellipsize = end
+    ignore_newline = no
+
+    progress_bar = true
+    progress_bar_height = 5
+    progress_bar_frame_width = 1
+    progress_bar_min_width = 190
+    progress_bar_max_width = 390
+    progress_bar_corner_radius = 0
+
+    icon_position = off
+
+    indicate_hidden = yes
+    sort = yes
+
+    show_age_threshold = 60
+    sticky_history = yes
+    history_length = 50
+
+    stack_duplicates = true
+    hide_duplicate_count = false
+
+    browser = /usr/bin/xdg-open
+
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_current
+    mouse_right_click = close_all
+
+
+[urgency_low]
+
+    background = "@BACKGROUND@"
+    foreground = "@MUTED@"
+    frame_color = "@BORDER@"
+
+    format = "<span foreground='@MUTED@'><b>WHISPER  //  %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 4
+
+
+[urgency_normal]
+
+    background = "@PANEL@"
+    foreground = "@TEXT@"
+    frame_color = "@YELLOW@"
+
+    format = "<span foreground='@YELLOW@'><b>MESSAGE  //  %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 7
+
+
+[urgency_critical]
+
+    background = "@PANEL@"
+    foreground = "@TEXT@"
+    frame_color = "@RED@"
+
+    format = "<span foreground='@RED@'><b>OMEN  //  %a</b></span>\n<b>%s</b>\n%b"
+
+    timeout = 0
