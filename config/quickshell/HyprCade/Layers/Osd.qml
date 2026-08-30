@@ -58,7 +58,6 @@ Scope {
         objects: [root.audioSink]
     }
 
-
     // ─────────────────────────────────────
     // SHOW / HIDE
     // ─────────────────────────────────────
@@ -89,7 +88,6 @@ Scope {
         root.reveal()
     }
 
-
     // ─────────────────────────────────────
     // IPC
     // ─────────────────────────────────────
@@ -101,7 +99,6 @@ Scope {
             root.showBrightness(value)
         }
     }
-
 
     // ─────────────────────────────────────
     // AUDIO WATCH
@@ -119,8 +116,6 @@ Scope {
         root.showAudio()
     }
 
-
-    // PipeWire startup değişiklikleri OSD açmasın.
     Timer {
         interval: 1000
         running: true
@@ -152,7 +147,6 @@ Scope {
                 root.windowVisible = false
         }
     }
-
 
     // ─────────────────────────────────────
     // WINDOW
@@ -194,11 +188,15 @@ Scope {
                 x: 10
                 y: root.opened ? 0 : 12
 
-                opacity: root.opened ? 1.0 : 0.0
+                opacity:
+                root.opened
+                ? 1.0
+                : 0.0
 
                 color: colors.background
 
                 border.width: 1
+
                 border.color: {
                     if (root.displayMode)
                         return colors.blue
@@ -232,7 +230,6 @@ Scope {
 
                     spacing: 0
 
-
                     // HEADER
                     RowLayout {
                         Layout.fillWidth: true
@@ -240,7 +237,8 @@ Scope {
                         Text {
                             Layout.fillWidth: true
 
-                            text: root.displayMode
+                            text:
+                            root.displayMode
                             ? "DISPLAY // INTERNAL PANEL"
                             : "AUDIO // "
                             + root.outputName.toUpperCase()
@@ -285,48 +283,53 @@ Scope {
                         }
                     }
 
-
-                    // METER
+                    // METER — 20 × 5%
                     Row {
                         id: meter
 
                         Layout.fillWidth: true
                         Layout.topMargin: 10
 
-                        spacing: 4
+                        spacing: 3
 
                         Repeater {
-                            model: 10
+                            model: 20
 
                             Rectangle {
                                 required property int index
 
                                 width:
-                                (meter.width - meter.spacing * 9)
-                                / 10
+                                (
+                                    meter.width
+                                    - meter.spacing * 19
+                                ) / 20
 
                                 height: 7
 
                                 color: {
-                                    if (!root.displayMode
-                                        && root.audioMuted)
+                                    if (
+                                        !root.displayMode
+                                        && root.audioMuted
+                                    ) {
                                         return colors.border
+                                    }
 
-                                        if (index
-                                            < Math.ceil(
-                                                root.currentPercent / 10
-                                            )) {
-                                            return root.displayMode
-                                            ? colors.blue
-                                            : colors.yellow
-                                            }
+                                    if (
+                                        index
+                                        < Math.ceil(
+                                            root.currentPercent / 5
+                                        )
+                                    ) {
+                                        return root.displayMode
+                                        ? colors.blue
+                                        : colors.yellow
+                                    }
 
-                                            return colors.border
+                                    return colors.border
                                 }
                             }
                         }
                     }
-
 
                     // FOOTER
                     RowLayout {
@@ -364,7 +367,8 @@ Scope {
                         }
 
                         Text {
-                            text: root.displayMode
+                            text:
+                            root.displayMode
                             ? "BEBOP DISPLAY SYSTEM"
                             : "BEBOP AUDIO SYSTEM"
 
