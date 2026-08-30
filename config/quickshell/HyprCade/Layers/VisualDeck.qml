@@ -35,7 +35,7 @@ Scope {
             number: "01",
             id: "evangelion",
             name: "EVANGELION",
-            available: false
+            available: true
         },
         {
             number: "02",

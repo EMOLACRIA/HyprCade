@@ -1,0 +1,301 @@
+# ============================================================
+# HYPRCADE // NEON GENESIS EVANGELION
+# HYPRLOCK — NERV AUTHORIZATION
+# ============================================================
+
+general {
+    hide_cursor = false
+    ignore_empty_input = true
+    immediate_render = true
+}
+
+
+# ============================================================
+# BACKGROUND
+# ============================================================
+
+background {
+    monitor =
+
+    path = @WALLPAPER_PATH@
+
+    blur_passes = 0
+
+    brightness = 0.52
+    contrast = 1.02
+
+    vibrancy = 0.04
+    vibrancy_darkness = 0.0
+}
+
+
+# ============================================================
+# TOP LEFT — NERV IDENTITY
+# ============================================================
+
+label {
+    monitor =
+
+    text = NERV
+
+    color = rgb(@TEXT_HEX@)
+
+    font_family = monospace
+    font_size = 14
+
+    position = 52, -42
+
+    halign = left
+    valign = top
+}
+
+
+label {
+    monitor =
+
+    text = @SYSTEM_NAME@
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = 52, -67
+
+    halign = left
+    valign = top
+}
+
+
+shape {
+    monitor =
+
+    size = 110, 2
+
+    color = rgb(@RED_HEX@)
+
+    rounding = 0
+
+    position = 52, -92
+
+    halign = left
+    valign = top
+}
+
+
+# ============================================================
+# TOP RIGHT — TIME
+# ============================================================
+
+label {
+    monitor =
+
+    text = $TIME
+
+    color = rgb(@TEXT_HEX@)
+
+    font_family = monospace
+    font_size = 34
+
+    position = -52, -36
+
+    halign = right
+    valign = top
+}
+
+
+label {
+    monitor =
+
+    text = cmd[update:1000] date '+%a // %d %b %Y' | tr '[:lower:]' '[:upper:]'
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = -54, -91
+
+    halign = right
+    valign = top
+}
+
+
+# ============================================================
+# AUTHORIZATION
+# ============================================================
+
+label {
+    monitor =
+
+    text = AUTHORIZATION REQUIRED
+
+    color = rgb(@TEXT_HEX@)
+
+    font_family = monospace
+    font_size = 11
+
+    position = 0, -192
+
+    halign = center
+    valign = center
+}
+
+
+label {
+    monitor =
+
+    text = MAGI ACCESS // LOCAL SESSION
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = 0, -218
+
+    halign = center
+    valign = center
+}
+
+
+shape {
+    monitor =
+
+    size = 460, 1
+
+    color = rgb(@BORDER_HEX@)
+
+    rounding = 0
+
+    position = 0, -240
+
+    halign = center
+    valign = center
+}
+
+
+input-field {
+    monitor =
+
+    size = 460, 48
+
+    position = 0, -282
+
+    halign = center
+    valign = center
+
+    outline_thickness = 1
+    rounding = 0
+
+    outer_color = rgb(@BORDER_HEX@)
+    inner_color = rgba(@BACKGROUND_RGB@, 0.90)
+
+    font_color = rgb(@TEXT_HEX@)
+    font_family = monospace
+
+    dots_size = 0.16
+    dots_spacing = 0.24
+    dots_center = true
+    dots_rounding = 0
+
+    fade_on_empty = false
+
+    placeholder_text = <span foreground="##@MUTED_HEX@">ENTER ACCESS CODE</span>
+
+    check_color = rgb(@MUTED_HEX@)
+    check_text = VERIFYING // MAGI LINK
+
+    fail_color = rgb(@RED_HEX@)
+    fail_text = ACCESS DENIED // $FAIL
+
+    capslock_color = rgb(@RED_HEX@)
+}
+
+
+label {
+    monitor =
+
+    text = [ ENTER // RESTORE SESSION ]
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = 0, -324
+
+    halign = center
+    valign = center
+}
+
+
+# ============================================================
+# BOTTOM SYSTEM MARKINGS
+# ============================================================
+
+label {
+    monitor =
+
+    text = MAGI SYSTEM
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = 52, 38
+
+    halign = left
+    valign = bottom
+}
+
+
+label {
+    monitor =
+
+    text = MELCHIOR // BALTHASAR // CASPER
+
+    color = rgb(@MUTED_HEX@)
+
+    font_family = monospace
+    font_size = 6
+
+    position = 52, 20
+
+    halign = left
+    valign = bottom
+}
+
+
+label {
+    monitor =
+
+    text = SESSION // LOCKED
+
+    color = rgb(@RED_HEX@)
+
+    font_family = monospace
+    font_size = 7
+
+    position = -52, 38
+
+    halign = right
+    valign = bottom
+}
+
+
+shape {
+    monitor =
+
+    size = 92, 2
+
+    color = rgb(@RED_HEX@)
+
+    rounding = 0
+
+    position = -52, 20
+
+    halign = right
+    valign = bottom
+}

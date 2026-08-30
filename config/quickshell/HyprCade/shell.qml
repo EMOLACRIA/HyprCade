@@ -2,6 +2,7 @@ import Quickshell
 
 import "Layers" as Common
 import "Themes/EldenRing" as EldenRing
+import "Themes/Evangelion" as Evangelion
 import "Data"
 
 Scope {
@@ -15,13 +16,21 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.TopBar {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.TopBar {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.TopBar {}
     }
@@ -32,13 +41,21 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.Launcher {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.Launcher {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.Launcher {}
     }
@@ -49,13 +66,21 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.RightPanel {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.RightPanel {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.RightPanel {}
     }
@@ -66,13 +91,21 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.ControlPanel {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.ControlPanel {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.ControlPanel {}
     }
@@ -83,13 +116,21 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.PowerMenu {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.PowerMenu {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.PowerMenu {}
     }
@@ -100,21 +141,35 @@ Scope {
     // ============================================================
 
     LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.Osd {}
+    }
+
+    LazyLoader {
         active: colors.themeId === "elden-ring"
 
         EldenRing.Osd {}
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.Osd {}
     }
 
 
     // ============================================================
-    // SHARED FOR NOW
+    // VISUAL DECK
     // ============================================================
+
+    LazyLoader {
+        active: colors.themeId === "evangelion"
+
+        Evangelion.VisualDeck {}
+    }
 
     LazyLoader {
         active: colors.themeId === "elden-ring"
@@ -123,7 +178,9 @@ Scope {
     }
 
     LazyLoader {
-        active: colors.themeId !== "elden-ring"
+        active:
+        colors.themeId !== "elden-ring"
+        && colors.themeId !== "evangelion"
 
         Common.VisualDeck {}
     }

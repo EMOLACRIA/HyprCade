@@ -30,7 +30,7 @@ Scope {
             number: "I",
             id: "evangelion",
             name: "EVANGELION",
-            available: false
+            available: true
         },
         {
             number: "II",
@@ -48,7 +48,7 @@ Scope {
             number: "IV",
             id: "undertale",
             name: "UNDERTALE",
-            available: true
+            available: false
         },
         {
             number: "V",

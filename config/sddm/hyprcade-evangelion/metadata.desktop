@@ -1,0 +1,16 @@
+[SddmGreeterTheme]
+Name=HyprCade Evangelion
+Description=HyprCade NERV / MAGI authentication theme
+Author=EMOLACRIA
+Copyright=
+License=
+Type=sddm-theme
+Version=1.0
+Website=
+Screenshot=
+MainScript=Main.qml
+ConfigFile=theme.conf
+TranslationsDirectory=
+Email=
+Theme-Id=hyprcade-evangelion
+Theme-API=2.0
